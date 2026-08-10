@@ -1,4 +1,5 @@
 import java.util.Scanner;
+
 class Student
 {
 	String name,enrollment_no;
@@ -8,16 +9,120 @@ class Student
 	double m_sem1[],m_sem2[],m_sem3[],m_sem4[],m_sem5[],m_sem6[],m_sem7[],m_sem8[];//Marks Array
 		
 	Scanner sc=new Scanner(System.in);
+
+	// Helper method: checks if a string is a valid number (integer or decimal).
+	// Allows optional leading minus sign, digits, and at most one dot.
+	// Returns true if valid, false otherwise.
+	boolean isValidNumber(String input)
+	{
+		if(input==null || input.length()==0)
+		{
+			return false;
+		}
+		int startIndex=0;
+		// Allow a leading minus sign for negative numbers
+		if(input.charAt(0)=='-')
+		{
+			startIndex=1;
+		}
+		// After a minus sign, there must be at least one character
+		if(startIndex>=input.length())
+		{
+			return false;
+		}
+		int dotCount=0;
+		for(int i=startIndex;i<input.length();i++)
+		{
+			char c=input.charAt(i);
+			if(c=='.')
+			{
+				dotCount++;
+				if(dotCount>1)
+				{
+					return false;
+				}
+			}
+			else if(c<'0' || c>'9')
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	// Helper method: checks if a string is a valid integer (no dot allowed).
+	// Allows optional leading minus sign.
+	boolean isValidInteger(String input)
+	{
+		if(input==null || input.length()==0)
+		{
+			return false;
+		}
+		int startIndex=0;
+		if(input.charAt(0)=='-')
+		{
+			startIndex=1;
+		}
+		if(startIndex>=input.length())
+		{
+			return false;
+		}
+		for(int i=startIndex;i<input.length();i++)
+		{
+			char c=input.charAt(i);
+			if(c<'0' || c>'9')
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
 	void setStudentDetail(int n)		//n= serial number of student.
 	{
-		System.out.println("Enter name of student "+n+": ");
-		name=sc.nextLine();
+		// --- Name Validation ---
+		while(true)
+		{
+			System.out.println("Enter name of student "+n+": ");
+			name=sc.nextLine();
+
+			// Check: name must not be empty
+			if(name.length()==0)
+			{
+				System.out.println("Invalid name. Name cannot be empty. Enter again:");
+				continue;
+			}
+
+			// Check: name must not contain digits or special characters (only letters and spaces allowed)
+			boolean nameValid=true;
+			for(int i=0;i<name.length();i++)
+			{
+				char c=name.charAt(i);
+				// Allow letters (a-z, A-Z) and spaces only
+				if(!((c>='a' && c<='z') || (c>='A' && c<='Z') || c==' '))
+				{
+					nameValid=false;
+					break;
+				}
+			}
+
+			if(nameValid==false)
+			{
+				System.out.println("Invalid name. Name should not contain numbers or special characters. Enter again:");
+				continue;
+			}
+
+			// Name is valid, exit loop
+			break;
+		}
+
+		// --- Enrollment Number Validation (existing logic preserved + improved with nextLine) ---
 		System.out.println("Enter Enrollment number of student"+n+": ");
 		char c;
 		boolean b=true;
 		while(true)
 		{
-			this.enrollment_no=sc.next();
+			this.enrollment_no=sc.nextLine().trim();
 			if(this.enrollment_no.length()!=14)
 			{
 				System.out.println("Enrollment number must be of 14 digits.Enter again:");
@@ -25,6 +130,7 @@ class Student
 			}
 			else
 			{
+				b=false;
 				for(int i=0;i<14;i++)
 				{
 					c=this.enrollment_no.charAt(i);
@@ -33,10 +139,6 @@ class Student
 						System.out.println("Invalid enrollment number.It must have only digits.Enter again:");
 						b=true;
 						break;
-					}
-					else
-					{
-						b=false;
 					}
 				}
 				if(b==false)
@@ -49,6 +151,7 @@ class Student
 		System.out.println("^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_^_");
 		System.out.println();
 	}
+
 	void Marksdetails(String s[],double m[])
 	{
 		for(int i=0;i<s.length;i++)
@@ -56,7 +159,26 @@ class Student
 			System.out.println("Enter marks of "+s[i]+" :");
 			while(true)
 			{
-				m[i]=sc.nextDouble();
+				String input=sc.nextLine().trim();
+
+				// Check: input must not be empty
+				if(input.length()==0)
+				{
+					System.out.println("Input cannot be empty. Enter marks between 0 to 100.");
+					continue;
+				}
+
+				// Check: input must be a valid number (digits and at most one dot, optional leading minus)
+				if(isValidNumber(input)==false)
+				{
+					System.out.println("Invalid input. Please enter a numeric value between 0 to 100.");
+					continue;
+				}
+
+				// Now it is safe to parse
+				m[i]=Double.parseDouble(input);
+
+				// Check: range validation (existing logic preserved)
 				if(m[i]<0 || m[i]>100)
 				{
 					System.out.println("Enter marks between 0 to 100.");
@@ -119,6 +241,34 @@ class Run
 	static double credit_sem1[],credit_sem2[],credit_sem3[],credit_sem4[],credit_sem5[],credit_sem6[],credit_sem7[],credit_sem8[];//Credit array
 	
 	Student s[];
+
+	// Helper method: checks if a string is a valid integer (no dot allowed).
+	// Allows optional leading minus sign.
+	boolean isValidInteger(String input)
+	{
+		if(input==null || input.length()==0)
+		{
+			return false;
+		}
+		int startIndex=0;
+		if(input.charAt(0)=='-')
+		{
+			startIndex=1;
+		}
+		if(startIndex>=input.length())
+		{
+			return false;
+		}
+		for(int i=startIndex;i<input.length();i++)
+		{
+			char c=input.charAt(i);
+			if(c<'0' || c>'9')
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	double calulateSGPA(double m[],double c[])
 	{
@@ -184,10 +334,10 @@ class CSE extends Run
 		s_sem2=new String[]{"Mathematics-2","Java-2","Data Structures","Database Management System","Fundamental of Electronics and Electrical Engineering"};
 		credit_sem2=new double[]{5,6,6,6,4};
 		
-		s_sem3=new String[]{"Digital Electronics","Javascript-1","Introduction to Probability Theory and Stichastic Processes","Python-1","Effective Technical Communication","Constitution of India"};
+		s_sem3=new String[]{"Digital Electronics","Full Stack Development-1","Introduction to Probability Theory and Stichastic Processes","Python-1","Effective Technical Communication","Constitution of India"};
 		credit_sem3=new double[]{5,6,5,5,3,0};
 		
-		s_sem4=new String[]{" Python - 2","Discrete Mathematics","Javascript-2","Computer Organization & Architecture","Theory of Computation"};
+		s_sem4=new String[]{" Python - 2","Discrete Mathematics","Full Stack Development -2","Computer Organization & Architecture","Theory of Computation"};
 		credit_sem4=new double[]{5,4,6,5,5};
 		
 		s_sem5=new String[]{"Project-I"};
@@ -206,8 +356,41 @@ class CSE extends Run
 	
 	public void Data()
 	{
-		System.out.println("Enter number of students.");
-		int n=sc.nextInt();
+		// --- Number of Students Validation ---
+		int n=0;
+		while(true)
+		{
+			System.out.println("Enter number of students.");
+			String input=sc.nextLine().trim();
+
+			// Check: input must not be empty
+			if(input.length()==0)
+			{
+				System.out.println("Input cannot be empty. Please enter a positive integer.");
+				continue;
+			}
+
+			// Check: input must be a valid integer (no dot, no letters)
+			if(isValidInteger(input)==false)
+			{
+				System.out.println("Invalid input. Please enter a positive integer.");
+				continue;
+			}
+
+			// Now safe to parse
+			n=Integer.parseInt(input);
+
+			// Check: must be positive
+			if(n<=0)
+			{
+				System.out.println("Number of students must be greater than 0. Please enter again.");
+				continue;
+			}
+
+			// Valid number of students
+			break;
+		}
+
 		s=new Student[n];
 		System.out.println();
 		
@@ -430,8 +613,41 @@ class Mechanical extends Run
 	}
 	public void Data()
 	{
-		System.out.println("Enter number of students.");
-		int n=sc.nextInt();
+		// --- Number of Students Validation ---
+		int n=0;
+		while(true)
+		{
+			System.out.println("Enter number of students.");
+			String input=sc.nextLine().trim();
+
+			// Check: input must not be empty
+			if(input.length()==0)
+			{
+				System.out.println("Input cannot be empty. Please enter a positive integer.");
+				continue;
+			}
+
+			// Check: input must be a valid integer (no dot, no letters)
+			if(isValidInteger(input)==false)
+			{
+				System.out.println("Invalid input. Please enter a positive integer.");
+				continue;
+			}
+
+			// Now safe to parse
+			n=Integer.parseInt(input);
+
+			// Check: must be positive
+			if(n<=0)
+			{
+				System.out.println("Number of students must be greater than 0. Please enter again.");
+				continue;
+			}
+
+			// Valid number of students
+			break;
+		}
+
 		s=new Student[n];
 		System.out.println();
 		
@@ -656,8 +872,41 @@ class Civil extends Run
 	
 	public void Data()
 	{
-		System.out.println("Enter number of students.");
-		int n=sc.nextInt();
+		// --- Number of Students Validation ---
+		int n=0;
+		while(true)
+		{
+			System.out.println("Enter number of students.");
+			String input=sc.nextLine().trim();
+
+			// Check: input must not be empty
+			if(input.length()==0)
+			{
+				System.out.println("Input cannot be empty. Please enter a positive integer.");
+				continue;
+			}
+
+			// Check: input must be a valid integer (no dot, no letters)
+			if(isValidInteger(input)==false)
+			{
+				System.out.println("Invalid input. Please enter a positive integer.");
+				continue;
+			}
+
+			// Now safe to parse
+			n=Integer.parseInt(input);
+
+			// Check: must be positive
+			if(n<=0)
+			{
+				System.out.println("Number of students must be greater than 0. Please enter again.");
+				continue;
+			}
+
+			// Valid number of students
+			break;
+		}
+
 		s=new Student[n];
 		System.out.println();
 		
@@ -850,21 +1099,86 @@ class Civil extends Run
 
 class Main
 {
+	// Helper method: checks if a string is a valid integer (no dot allowed).
+	// Allows optional leading minus sign.
+	static boolean isValidInteger(String input)
+	{
+		if(input==null || input.length()==0)
+		{
+			return false;
+		}
+		int startIndex=0;
+		if(input.charAt(0)=='-')
+		{
+			startIndex=1;
+		}
+		if(startIndex>=input.length())
+		{
+			return false;
+		}
+		for(int i=startIndex;i<input.length();i++)
+		{
+			char c=input.charAt(i);
+			if(c<'0' || c>'9')
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	// Helper method: validates enrollment number (must be exactly 14 digits).
+	static boolean isValidEnrollment(String en)
+	{
+		if(en==null || en.length()!=14)
+		{
+			return false;
+		}
+		for(int i=0;i<14;i++)
+		{
+			char c=en.charAt(i);
+			if(c<'0' || c>'9')
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static void main(String args [])
 	{
 		Scanner sc=new Scanner(System.in);
 		System.out.println("Select branch: Enter 1 for CSE, 2 for Mechanical,3 for Civil.");
-		int choice;
+		int choice=0;
 		String en;
 		
 		while(true)
 		{
-			choice=sc.nextInt();
+			// --- Branch Choice Validation ---
+			String branchInput=sc.nextLine().trim();
+
+			// Check: branch input must not be empty
+			if(branchInput.length()==0)
+			{
+				System.out.println("Input cannot be empty. Enter valid Choice:");
+				continue;
+			}
+
+			// Check: must be a valid integer
+			if(isValidInteger(branchInput)==false)
+			{
+				System.out.println("Invalid input. Enter valid Choice:");
+				continue;
+			}
+
+			// Now safe to parse
+			choice=Integer.parseInt(branchInput);
+
 			if(choice==1)
 			{
 				CSE cs=new CSE();
 				cs.Data();
-				int n;
+				int n=0;
 				while(true)
 				{
 					System.out.println("Enter your choice according to given option:");
@@ -875,7 +1189,33 @@ class Main
 					System.out.println("press 5 for exit:");
 					
 					System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-					n=sc.nextInt();
+
+					// --- Menu Choice Validation ---
+					String menuInput=sc.nextLine().trim();
+
+					// Check: menu input must not be empty
+					if(menuInput.length()==0)
+					{
+						System.out.println("Input cannot be empty. Please enter a choice between 1 to 5.");
+						continue;
+					}
+
+					// Check: must be a valid integer
+					if(isValidInteger(menuInput)==false)
+					{
+						System.out.println("Invalid input. Please enter a choice between 1 to 5.");
+						continue;
+					}
+
+					// Now safe to parse
+					n=Integer.parseInt(menuInput);
+
+					// Check: must be between 1 and 5
+					if(n<1 || n>5)
+					{
+						System.out.println("Invalid choice. Please enter a choice between 1 to 5.");
+						continue;
+					}
 					
 					if(n==5)
 					{
@@ -885,15 +1225,37 @@ class Main
 					{
 						case 1:
 								System.out.println("Enter the semester number that you want to display detail");
-								n=sc.nextInt();
-								if(n>0 && n<9)
+
+								// --- Semester Number Validation ---
+								int semNum1=0;
+								while(true)
 								{
-									cs.displayDetails(n);
+									String semInput=sc.nextLine().trim();
+
+									if(semInput.length()==0)
+									{
+										System.out.println("Input cannot be empty. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									if(isValidInteger(semInput)==false)
+									{
+										System.out.println("Invalid input. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									semNum1=Integer.parseInt(semInput);
+
+									if(semNum1<1 || semNum1>8)
+									{
+										System.out.println("You have entered Invalid sem number. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									// Valid semester number
+									break;
 								}
-								else
-								{
-									System.out.println("You have entered Invalid sem number:");
-								}
+								cs.displayDetails(semNum1);
 								break;
 						case 2:
 								
@@ -901,31 +1263,77 @@ class Main
 								break;
 						case 3:
 								System.out.println("Enter the semester number by which you want to sort detail");
-								n=sc.nextInt();
-								if(n>0 && n<9)
+
+								// --- Semester Number Validation ---
+								int semNum2=0;
+								while(true)
 								{
-									cs.sortBySGPA(n);
+									String semInput=sc.nextLine().trim();
+
+									if(semInput.length()==0)
+									{
+										System.out.println("Input cannot be empty. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									if(isValidInteger(semInput)==false)
+									{
+										System.out.println("Invalid input. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									semNum2=Integer.parseInt(semInput);
+
+									if(semNum2<1 || semNum2>8)
+									{
+										System.out.println("You have entered Invalid sem number. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									// Valid semester number
+									break;
 								}
-								else
-								{
-									System.out.println("You have entered Invalid sem number:");
-								}
+								cs.sortBySGPA(semNum2);
 								break;
 						case 4:
 								System.out.println("Enter Enrollment no: ");
-								sc.nextLine();
-								en=sc.nextLine();
+
+								// --- Enrollment Number Validation for Search ---
+								while(true)
+								{
+									en=sc.nextLine().trim();
+
+									if(isValidEnrollment(en)==false)
+									{
+										if(en.length()==0)
+										{
+											System.out.println("Enrollment number cannot be empty. Enter a valid 14-digit enrollment number:");
+										}
+										else if(en.length()!=14)
+										{
+											System.out.println("Enrollment number must be exactly 14 digits. Enter again:");
+										}
+										else
+										{
+											System.out.println("Invalid enrollment number. It must contain only digits. Enter again:");
+										}
+										continue;
+									}
+
+									// Valid enrollment number
+									break;
+								}
 								cs.findStudent(en);
 								break;
 					}
 				}
-					break;
+				break;
 			}
 			else if(choice==2)
 			{
 				Mechanical mn=new Mechanical();
 				mn.Data();
-				int n;
+				int n=0;
 				while(true)
 				{
 					System.out.println("Enter your choice according to given option:");
@@ -935,8 +1343,34 @@ class Main
 					System.out.println("press 4 for display any one student's detail:");
 					System.out.println("press 5 for exit:");
 					
-					n=sc.nextInt();
+					// --- Menu Choice Validation ---
+					String menuInput=sc.nextLine().trim();
+
 					System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+					// Check: menu input must not be empty
+					if(menuInput.length()==0)
+					{
+						System.out.println("Input cannot be empty. Please enter a choice between 1 to 5.");
+						continue;
+					}
+
+					// Check: must be a valid integer
+					if(isValidInteger(menuInput)==false)
+					{
+						System.out.println("Invalid input. Please enter a choice between 1 to 5.");
+						continue;
+					}
+
+					// Now safe to parse
+					n=Integer.parseInt(menuInput);
+
+					// Check: must be between 1 and 5
+					if(n<1 || n>5)
+					{
+						System.out.println("Invalid choice. Please enter a choice between 1 to 5.");
+						continue;
+					}
 					
 					if(n==5)
 					{
@@ -946,35 +1380,103 @@ class Main
 					{
 						case 1:
 								System.out.println("Enter the semester number that you want to display detail");
-								n=sc.nextInt();
-								if(n>0 && n<9)
+
+								// --- Semester Number Validation ---
+								int semNum1=0;
+								while(true)
 								{
-									mn.displayDetails(n);
+									String semInput=sc.nextLine().trim();
+
+									if(semInput.length()==0)
+									{
+										System.out.println("Input cannot be empty. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									if(isValidInteger(semInput)==false)
+									{
+										System.out.println("Invalid input. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									semNum1=Integer.parseInt(semInput);
+
+									if(semNum1<1 || semNum1>8)
+									{
+										System.out.println("You have entered Invalid sem number. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									// Valid semester number
+									break;
 								}
-								else
-								{
-									System.out.println("You have entered Invalid sem number:");
-								}
+								mn.displayDetails(semNum1);
 								break;
 						case 2:
 								mn.sortByCGPA();
 								break;
 						case 3:
 								System.out.println("Enter the semester number by which you want to sort detail");
-								n=sc.nextInt();
-								if(n>0 && n<9)
+
+								// --- Semester Number Validation ---
+								int semNum2=0;
+								while(true)
 								{
-									mn.sortBySGPA(n);
+									String semInput=sc.nextLine().trim();
+
+									if(semInput.length()==0)
+									{
+										System.out.println("Input cannot be empty. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									if(isValidInteger(semInput)==false)
+									{
+										System.out.println("Invalid input. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									semNum2=Integer.parseInt(semInput);
+
+									if(semNum2<1 || semNum2>8)
+									{
+										System.out.println("You have entered Invalid sem number. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									// Valid semester number
+									break;
 								}
-								else
-								{
-									System.out.println("You have entered Invalid sem number:");
-								}
+								mn.sortBySGPA(semNum2);
 								break;
 						case 4:
 								System.out.println("Enter Enrollment no: ");
-								sc.nextLine();
-								en=sc.nextLine();
+
+								// --- Enrollment Number Validation for Search ---
+								while(true)
+								{
+									en=sc.nextLine().trim();
+
+									if(isValidEnrollment(en)==false)
+									{
+										if(en.length()==0)
+										{
+											System.out.println("Enrollment number cannot be empty. Enter a valid 14-digit enrollment number:");
+										}
+										else if(en.length()!=14)
+										{
+											System.out.println("Enrollment number must be exactly 14 digits. Enter again:");
+										}
+										else
+										{
+											System.out.println("Invalid enrollment number. It must contain only digits. Enter again:");
+										}
+										continue;
+									}
+
+									// Valid enrollment number
+									break;
+								}
 								mn.findStudent(en);
 								break;
 					}
@@ -985,7 +1487,7 @@ class Main
 			{
 				Civil cv=new Civil();
 				cv.Data();
-				int n;
+				int n=0;
 				while(true)
 				{
 					System.out.println("Enter your choice according to given option:");
@@ -995,8 +1497,34 @@ class Main
 					System.out.println("press 4 for display any one student's detail:");
 					System.out.println("press 5 for exit:");
 					
-					n=sc.nextInt();
+					// --- Menu Choice Validation ---
+					String menuInput=sc.nextLine().trim();
+
 					System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+					// Check: menu input must not be empty
+					if(menuInput.length()==0)
+					{
+						System.out.println("Input cannot be empty. Please enter a choice between 1 to 5.");
+						continue;
+					}
+
+					// Check: must be a valid integer
+					if(isValidInteger(menuInput)==false)
+					{
+						System.out.println("Invalid input. Please enter a choice between 1 to 5.");
+						continue;
+					}
+
+					// Now safe to parse
+					n=Integer.parseInt(menuInput);
+
+					// Check: must be between 1 and 5
+					if(n<1 || n>5)
+					{
+						System.out.println("Invalid choice. Please enter a choice between 1 to 5.");
+						continue;
+					}
 					
 					if(n==5)
 					{
@@ -1006,35 +1534,103 @@ class Main
 					{
 						case 1:
 								System.out.println("Enter the semester number that you want to display detail");
-								n=sc.nextInt();
-								if(n>0 && n<9)
+
+								// --- Semester Number Validation ---
+								int semNum1=0;
+								while(true)
 								{
-									cv.displayDetails(n);
+									String semInput=sc.nextLine().trim();
+
+									if(semInput.length()==0)
+									{
+										System.out.println("Input cannot be empty. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									if(isValidInteger(semInput)==false)
+									{
+										System.out.println("Invalid input. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									semNum1=Integer.parseInt(semInput);
+
+									if(semNum1<1 || semNum1>8)
+									{
+										System.out.println("You have entered Invalid sem number. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									// Valid semester number
+									break;
 								}
-								else
-								{
-									System.out.println("You have entered Invalid sem number:");
-								}
+								cv.displayDetails(semNum1);
 								break;
 						case 2:
 								cv.sortByCGPA();
 								break;
 						case 3:
 								System.out.println("Enter the semester number by which you want to sort detail");
-								n=sc.nextInt();
-								if(n>0 && n<9)
+
+								// --- Semester Number Validation ---
+								int semNum2=0;
+								while(true)
 								{
-									cv.sortBySGPA(n);
+									String semInput=sc.nextLine().trim();
+
+									if(semInput.length()==0)
+									{
+										System.out.println("Input cannot be empty. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									if(isValidInteger(semInput)==false)
+									{
+										System.out.println("Invalid input. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									semNum2=Integer.parseInt(semInput);
+
+									if(semNum2<1 || semNum2>8)
+									{
+										System.out.println("You have entered Invalid sem number. Enter semester number between 1 to 8:");
+										continue;
+									}
+
+									// Valid semester number
+									break;
 								}
-								else
-								{
-									System.out.println("You have entered Invalid sem number:");
-								}
+								cv.sortBySGPA(semNum2);
 								break;
 						case 4:
 								System.out.println("Enter Enrollment no: ");
-								sc.nextLine();
-								en=sc.nextLine();
+
+								// --- Enrollment Number Validation for Search ---
+								while(true)
+								{
+									en=sc.nextLine().trim();
+
+									if(isValidEnrollment(en)==false)
+									{
+										if(en.length()==0)
+										{
+											System.out.println("Enrollment number cannot be empty. Enter a valid 14-digit enrollment number:");
+										}
+										else if(en.length()!=14)
+										{
+											System.out.println("Enrollment number must be exactly 14 digits. Enter again:");
+										}
+										else
+										{
+											System.out.println("Invalid enrollment number. It must contain only digits. Enter again:");
+										}
+										continue;
+									}
+
+									// Valid enrollment number
+									break;
+								}
 								cv.findStudent(en);
 								break;
 					}
@@ -1049,3 +1645,5 @@ class Main
 		
 	}
 }
+
+	
